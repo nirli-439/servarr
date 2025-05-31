@@ -1,0 +1,155 @@
+services:
+  radarr:
+    image: binhex/arch-radarr
+    container_name: binhex-radarr-v2
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=000
+      - TZ=${TZ}
+    ports:
+      - "7878:7878"
+    volumes:
+      - ./config/radarr:/config
+      - ./media/movies:/media
+      - ./downloads:/data
+      - ./downloads/incomplete:/data/incomplete
+      - binhex-shared:/shared
+    restart: unless-stopped
+    networks:
+      - arr-network
+    privileged: true
+    security_opt:
+      - label=disable
+
+  sonarr:
+    image: binhex/arch-sonarr
+    container_name: binhex-sonarr-v2
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=000
+      - TZ=${TZ}
+    ports:
+      - "8989:8989"
+      - "9897:9897"
+    volumes:
+      - ./config/sonarr:/config
+      - ./media/tv:/media
+      - ./downloads:/data
+      - ./downloads/incomplete:/data/incomplete
+    restart: unless-stopped
+    networks:
+      - arr-network
+    privileged: true
+    security_opt:
+      - label=disable
+
+  prowlarr:
+    image: ghcr.io/binhex/arch-prowlarr
+    container_name: binhex-prowlarr-v2
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=000
+      - TZ=${TZ}
+    ports:
+      - "9696:9696"
+    volumes:
+      - ./config/prowlarr:/config
+    restart: unless-stopped
+    networks:
+      - arr-network
+
+  telegram-bot-radarr:
+    image: woiza/telegram-bot-radarr
+    container_name: telegram-bot-radarr-v2
+    environment:
+      - TZ=${TZ}
+      - RBOT_BOT_ALLOWED_USERIDS=${RADARR_TELEGRAM_USERIDS}
+      - RBOT_RADARR_HOSTNAME=radarr
+      - RBOT_RADARR_API_KEY=${RADARR_API_KEY}
+      - RBOT_RADARR_PORT=7878
+      - RBOT_RADARR_PROTOCOL=http
+      - RBOT_BOT_IGNORE_TAGS=true
+      - RBOT_BOT_MAX_ITEMS=10
+      - RBOT_TELEGRAM_BOT_TOKEN=${RADARR_TELEGRAM_TOKEN}
+      - RADARR_CUSTOM_FOLDER=/media/movies
+    user: "appuser"
+    restart: unless-stopped
+    networks:
+      - arr-network
+
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr-v2
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - LOG_LEVEL=info
+      - UMASK=022
+    ports:
+      - "5055:5055"
+    volumes:
+      - ./config/jellyseerr:/app/config
+    restart: unless-stopped
+    networks:
+      - arr-network
+    privileged: true
+    security_opt:
+      - label=disable
+
+  deluge:
+    image: binhex/arch-deluge
+    container_name: binhex-deluge-v2
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=000
+      - TZ=${TZ}
+      - DELUGE_DAEMON_LOG_LEVEL=info
+      - DELUGE_WEB_LOG_LEVEL=info
+    ports:
+      - "8112:8112"
+      - "58846:58846"
+      - "58946:58946"
+      - "58946:58946/udp"
+    volumes:
+      - ./config/deluge:/config
+      - ./downloads:/data
+      - ./media/movies:/data/movies
+      - ./media/audiobooks:/data/audiobook
+      - binhex-shared:/shared
+    restart: unless-stopped
+    networks:
+      - arr-network
+    privileged: true
+    security_opt:
+      - label=disable
+    cpuset: "0,1,2"
+
+  flaresolverr:
+    image: binhex/arch-flaresolverr
+    container_name: binhex-flaresolverr-v2
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=000
+      - TZ=${TZ}
+    ports:
+      - "8191:8191"
+    volumes:
+      - ./config/flaresolverr:/config
+    restart: unless-stopped
+    networks:
+      - arr-network
+    privileged: true
+    security_opt:
+      - label=disable
+
+volumes:
+  binhex-shared:
+
+networks:
+  arr-network:
