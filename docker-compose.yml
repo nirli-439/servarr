@@ -3,18 +3,18 @@ services:
     image: binhex/arch-radarr
     container_name: binhex-radarr-v2
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
+      - PUID=99
+      - PGID=100
       - UMASK=000
-      - TZ=${TZ}
+      - TZ=Asia/Jerusalem
     ports:
       - "7878:7878"
     volumes:
-      - ./config/radarr:/config
-      - ./media/movies:/media
-      - ./downloads:/data
-      - ./downloads/incomplete:/data/incomplete
-      - binhex-shared:/shared
+      - /mnt/user/appdata/binhex-radarr:/config
+      - /mnt/user/Movies:/media
+      - /mnt/user/downloads:/data
+      - /mnt/user/downloads/incomplete:/data/incomplete
+      # - binhex-shared:/shared
     restart: unless-stopped
     networks:
       - arr-network
@@ -26,18 +26,18 @@ services:
     image: binhex/arch-sonarr
     container_name: binhex-sonarr-v2
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
+      - PUID=99
+      - PGID=100
       - UMASK=000
-      - TZ=${TZ}
+      - TZ=Asia/Jerusalem
     ports:
       - "8989:8989"
       - "9897:9897"
     volumes:
-      - ./config/sonarr:/config
-      - ./media/tv:/media
-      - ./downloads:/data
-      - ./downloads/incomplete:/data/incomplete
+      - /mnt/user/appdata/binhex-sonarr:/config
+      - /mnt/user/TV_Shows:/media
+      - /mnt/user/appdata/data:/data
+      - /mnt/user/downloads/incomplete:/data/incomplete
     restart: unless-stopped
     networks:
       - arr-network
@@ -49,14 +49,14 @@ services:
     image: ghcr.io/binhex/arch-prowlarr
     container_name: binhex-prowlarr-v2
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
+      - PUID=99
+      - PGID=100
       - UMASK=000
-      - TZ=${TZ}
+      - TZ=Asia/Jerusalem
     ports:
       - "9696:9696"
     volumes:
-      - ./config/prowlarr:/config
+      - /mnt/user/appdata/binhex-prowlarr:/config
     restart: unless-stopped
     networks:
       - arr-network
@@ -65,15 +65,15 @@ services:
     image: woiza/telegram-bot-radarr
     container_name: telegram-bot-radarr-v2
     environment:
-      - TZ=${TZ}
-      - RBOT_BOT_ALLOWED_USERIDS=${RADARR_TELEGRAM_USERIDS}
+      - TZ=Asia/Jerusalem
+      - RBOT_BOT_ALLOWED_USERIDS=5003945996
       - RBOT_RADARR_HOSTNAME=radarr
-      - RBOT_RADARR_API_KEY=${RADARR_API_KEY}
+      - RBOT_RADARR_API_KEY=917ac4b548b1443a8d3a4137349b73bf
       - RBOT_RADARR_PORT=7878
       - RBOT_RADARR_PROTOCOL=http
       - RBOT_BOT_IGNORE_TAGS=true
       - RBOT_BOT_MAX_ITEMS=10
-      - RBOT_TELEGRAM_BOT_TOKEN=${RADARR_TELEGRAM_TOKEN}
+      - RBOT_TELEGRAM_BOT_TOKEN=8150905575:AAFib8flRYNsmOKWB2oU9d8Y1aDEbPH-Xpk
       - RADARR_CUSTOM_FOLDER=/media/movies
     user: "appuser"
     restart: unless-stopped
@@ -84,15 +84,15 @@ services:
     image: fallenbagel/jellyseerr:latest
     container_name: jellyseerr-v2
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
+      - PUID=99
+      - PGID=100
+      - TZ=Asia/Jerusalem
       - LOG_LEVEL=info
       - UMASK=022
     ports:
       - "5055:5055"
     volumes:
-      - ./config/jellyseerr:/app/config
+      - /mnt/user/appdata/jellyseerr:/app/config
     restart: unless-stopped
     networks:
       - arr-network
@@ -104,10 +104,10 @@ services:
     image: binhex/arch-deluge
     container_name: binhex-deluge-v2
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
+      - PUID=99
+      - PGID=100
       - UMASK=000
-      - TZ=${TZ}
+      - TZ=Asia/Jerusalem
       - DELUGE_DAEMON_LOG_LEVEL=info
       - DELUGE_WEB_LOG_LEVEL=info
     ports:
@@ -116,11 +116,11 @@ services:
       - "58946:58946"
       - "58946:58946/udp"
     volumes:
-      - ./config/deluge:/config
-      - ./downloads:/data
-      - ./media/movies:/data/movies
-      - ./media/audiobooks:/data/audiobook
-      - binhex-shared:/shared
+      - /mnt/user/appdata/binhex-deluge:/config
+      - /mnt/cache/downloads:/data
+      # - /mnt/user/Movies:/data/movies
+      # - /mnt/user/audiobooks:/data/audiobook
+      # - binhex-shared:/shared
     restart: unless-stopped
     networks:
       - arr-network
@@ -133,14 +133,14 @@ services:
     image: binhex/arch-flaresolverr
     container_name: binhex-flaresolverr-v2
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
+      - PUID=99
+      - PGID=100
       - UMASK=000
-      - TZ=${TZ}
+      - TZ=Asia/Jerusalem
     ports:
       - "8191:8191"
     volumes:
-      - ./config/flaresolverr:/config
+      - /mnt/user/appdata/binhex-flaresolverr:/config
     restart: unless-stopped
     networks:
       - arr-network
@@ -148,8 +148,10 @@ services:
     security_opt:
       - label=disable
 
-volumes:
-  binhex-shared:
+# volumes:
+#   binhex-shared:
+#     name: binhex-shared
 
 networks:
   arr-network:
+    name: arr-network
