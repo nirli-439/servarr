@@ -68,12 +68,12 @@ services:
       - TZ=Asia/Jerusalem
       - RBOT_BOT_ALLOWED_USERIDS=5003945996
       - RBOT_RADARR_HOSTNAME=radarr
-      - RBOT_RADARR_API_KEY=917ac4b548b1443a8d3a4137349b73bf
+      - RBOT_RADARR_API_KEY=#
       - RBOT_RADARR_PORT=7878
       - RBOT_RADARR_PROTOCOL=http
       - RBOT_BOT_IGNORE_TAGS=true
       - RBOT_BOT_MAX_ITEMS=10
-      - RBOT_TELEGRAM_BOT_TOKEN=8150905575:AAFib8flRYNsmOKWB2oU9d8Y1aDEbPH-Xpk
+      - RBOT_TELEGRAM_BOT_TOKEN=#
       - RADARR_CUSTOM_FOLDER=/media/movies
     user: "appuser"
     restart: unless-stopped
@@ -147,11 +147,7 @@ services:
     privileged: true
     security_opt:
       - label=disable
-
-# volumes:
-#   binhex-shared:
-#     name: binhex-shared
-
+      
 networks:
   arr-network:
     name: arr-network
